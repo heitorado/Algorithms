@@ -1,0 +1,104 @@
+Translated from https://www.thehuxley.com/problem/990
+Exercise Made by Paulo G. S. Fonseca
+
+The Petris game is a variation of the Tetris game, in which we have N columns of
+coloured stones, numbered from 1 to N. Every moment, a new stone comes from above
+and the player can move it in a way it falls at the top of one of the N columns,
+or start a new column in the left or the right of the rest. Each time a stone of
+color C is added at the top of the column above another stone of identical color,
+every stone of the same color C is removed from the top of this column. When a 
+column becomes empty, it is removed and all columns to the left are moved one
+position to the right, to fill in the gap.
+The objective is to maintain the total number of stones and columns the less as
+possible.
+
+For instance, let's suppose the current game configuration is as follows,
+each color being represented by a number:
+
+
+    2
+1 2 1 0 2
+0 1 2 2 1 1
+----------- <-- base
+1 2 3 4 5 6 <-- column number
+
+If a stone of color 2 is added to column 2, we'll have:
+
+  2 2
+1 2 1 0 2
+0 1 2 2 1 1
+-----------
+1 2 3 4 5 6 
+
+And then
+
+    2
+1   1 0 2
+0 1 2 2 1 1
+-----------
+1 2 3 4 5 6 
+
+If, after that, a stone of color 1 is added to the same column, we'll stay with:
+
+    2
+1 1 1 0 2
+0 1 2 2 1 1
+-----------
+1 2 3 4 5 6 
+
+and therefore
+
+    2
+1   1 0 2
+0   2 2 1 1
+-----------
+1 2 3 4 5 6 
+
+making the column 2 disappear, finishing finally with:
+  2
+1 1 0 2
+0 2 2 1 1
+---------
+1 2 3 4 5 
+
+
+
+
+
+---Input format---
+
+The first line of input consists of a integer
+
+P
+
+corresponding to the number of games to be evaluated
+
+Each game is represented by a sequence of moves, and each one corresponds to the addition of a new stone, in the following form:
+
+S[0] C[0]
+S[1] C[1]
+...
+S[M] C[M]
+END
+
+where
+
+- 0 <= S[i] <= N+1: indicates the column in which the stone is added, being N the current number of columns. If S[i] is 0, a new column must be added at the left. If S[i] equals N+1m a new column must be added to the right.
+ 
+- C[i] indicates the color of the stone to be added
+
+The end of each game is indicated by a line "END" followed by a blank line.
+
+---Output Format---
+
+For each game k=0,...,P-1 at the input, must be printed a line in the form:
+
+```
+case k: T[1] T[2] ... T[N]
+```
+
+where
+
+- N is the total number of columns at the end of the game, and
+
+- T[j] is the color of the stone at the top of the column j, for j=1,...,N
