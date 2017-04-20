@@ -3,8 +3,6 @@
 #include <cstdlib>
 using namespace std;
 
-int global = 0;
-
 typedef struct node{
 
 	int value;
@@ -21,7 +19,7 @@ int middleTerm(int a, int b, int c);
 int binarySearch(int vet[], int v, int size);
 void display(node* root);
 void _display(node* root, int spaces);
-void searchAndDestroy(node* root, int startInterval, int endInterval, int* destroyCount);
+node* searchAndDestroy(node* root, int startInterval, int endInterval, int* destroyCount);
 bool evaluate(node* root, int startInterval, int endInterval);
 
 //BST Operations
@@ -185,13 +183,13 @@ int main()
 				BST_Insert(root, add);
 				printf("%d: 1\n", i+1); //sucessfully added element
 				//DEBUG
-				display(root);
+				//display(root);
 			}
 			else
 			{
 				printf("%d: 0\n", i+1); //element is already there, can't add
 				//DEBUG
-				display(root);
+				//display(root);
 			}
 		}
 		else
@@ -199,19 +197,19 @@ int main()
 			sscanf(op, "DEL %d %d", &delL, &delR);
 			int erasedObjects = 0;
 
-			cout << "VALOR DA ROOT" << root->value << endl;
-			searchAndDestroy(root, delL, delR, &erasedObjects);
-			//searchAndDestroy(root, delL, delR, &erasedObjects);
+			//cout << "VALOR DA ROOT" << root->value << endl;
+			root = searchAndDestroy(root, delL, delR, &erasedObjects);
+			//root = searchAndDestroy(root, delL, delR, &erasedObjects);
 	
-			display(root);
+			//display(root);
+			//cout << endl << endl << endl;
 
-			printf("%d: %d %d\n", i+1, erasedObjects, global); //number of erased objects.
-			global = 0;
+			printf("%d: %d\n", i+1, erasedObjects); //number of erased objects.
 		}
 
 		//printf("%d\n %d\n %d\n", add, delL, delR);
 
-		/*if(i+1 == 3)
+		/*if(i+1 == 144)
 		{
 			cout << endl << endl << endl << endl;
 			traverse(root);
@@ -345,30 +343,33 @@ node* BST_Insert(node* root, int v)
 
 }
 
-void searchAndDestroy(node* root, int startInterval, int endInterval, int *destroyCount)
+node* searchAndDestroy(node* root, int startInterval, int endInterval, int *destroyCount)
 {
 	if(root == NULL)
-		return;
+		return root;
 
-	searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
+	root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
 	
 	//cout << root->value << " | ";
 
 	while(evaluate(root, startInterval, endInterval))
 	{	
 		*destroyCount += 1;
-		BST_Delete(root, root->value);
+		root = BST_Delete(root, root->value);
+
+		if(root == NULL)
+			return root;
 	}
 
-	searchAndDestroy(root->right, startInterval, endInterval, destroyCount);
+	root->right = searchAndDestroy(root->right, startInterval, endInterval, destroyCount);
 
-	return;
+	return root;
 }
 
 bool evaluate(node* root, int startInterval, int endInterval)
 {
-	if( (root->value >= startInterval) && (root->value <= endInterval)){
- 		global++;
+	if( (root->value >= startInterval) && (root->value <= endInterval))
+	{
  		cout <<  " |"<< root->value << "| \n";
 		return 1;
  	}
