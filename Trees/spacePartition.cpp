@@ -13,14 +13,12 @@ typedef struct node{
 
 
 
-//Auxiliary Functions
+//Auxiliary/Debug Functions
 int biggest(int a, int b);
 int middleTerm(int a, int b, int c);
-int binarySearch(int vet[], int v, int size);
 void display(node* root);
 void _display(node* root, int spaces);
-node* searchAndDestroy(node* root, int startInterval, int endInterval, int* destroyCount);
-bool evaluate(node* root, int startInterval, int endInterval);
+void traverse(node* root);
 
 //BST Operations
 node* BST_New(int value);
@@ -28,31 +26,13 @@ node* BST_Search(node* root, int v);
 node* BST_Insert(node* root, int v);
 node* BST_Delete(node* root, int v);
 node* BST_DeleteMin(node* root, int* val);
-node* createBSPTree(node* root, int start, int end, int v[]);
-
-//Sorting
-void quickSort(int vet[], int start, int end);
-int partition(int vet[], int start, int end);
-int pivot(int vet[], int start, int end);
-void swap(int *a, int *b);
-
-//Testing
-void printBST(node* root);
 int treeHeight(node* root);
-node* fillBST(node* root, int vet[], int start, int end);
 
-
-void traverse(node* root)
-{
-	if(root == NULL)
-		return;
-	traverse(root->left);
-	cout << root->value << " | ";
-	traverse(root->right);
-
-	return;
-}
-
+//Exercise Specific - BSPT Creation and Interval Destruction.
+node* createBSPTree(node* root, int start, int end, int v[]);
+int pivot(int vet[], int start, int end);
+node* searchAndDestroy(node* root, int startInterval, int endInterval, int* destroyCount);
+bool evaluate(node* root, int startInterval, int endInterval);
 
 int main()
 {
@@ -66,95 +46,10 @@ int main()
 	DA[0] = seed;
 
 	for(int i = 1; i < numObjects; ++i)
-	{
 		DA[i] = (A * DA[i-1] + C)%M;
-
-		//DEBUG
-		//printf("DA[%d]: %d\n\n", i, DA[i] );
-	}
+	
 	//Array created and filled.
-
 	node* root = createBSPTree(NULL, 0, numObjects-1, DA);
-
-	
-
-	//traverse(root);
-
-	//quickSort(DA, 0, numObjects-1);
-
-	/*
-	for(int i = 0; i < numObjects; ++i)
-	{
-		//DEBUG
-		printf("DA[%d]: %d\n", i, DA[i] );
-	}
-	*/
-
-	/*
-	//FOR TESTING
-	node* root = NULL;
-
-	root = BST_Insert(root, 75);
-	BST_Insert(root, 27);
-	BST_Insert(root, 88);
-	BST_Insert(root, 14);
-	BST_Insert(root, 53);
-	BST_Insert(root, 79);
-	BST_Insert(root, 92);
-	BST_Insert(root, 1);
-	BST_Insert(root, 40);
-	BST_Insert(root, 66);
-	//FOR TESTING 
-
-	*/
-
-	//node* root = fillBST(NULL, DA, 0, numObjects-1);
-
-	//cout << "Your BST is: " << endl;
-	//display(root);
-	//printBST(root);
-	//cout << endl;
-
-
-
-
-	/*
-	//if our number of objecs is less than 3, the base index is zero.
-	int baseIndex = DA[0];
-	if(numObjects >= 3)
-	{
-		//Now the base for our BST will be the medium between DA[0], D[(N-1)/2] and D[N-1]
-		int B1 = DA[0], B2 = DA[(numObjects-1)/2], B3 = DA[numObjects-1];
-		baseIndex = middleTerm(B1, B2, B3);
-
-		printf("%d %d %d\n",B1, B2, B3 );
-
-		printf("%d \n",baseIndex );
-
-	}
-	//This base will be the main root of our BST.
-	*/
-
-
-
-	/*
-	//Now we'll create the BST
-	node* root = BST_New(baseIndex);
-
-	for(int i = 0; i < numObjects; ++i)
-	{
-		if(DA[i] != baseIndex)
-			BST_Insert(root, DA[i]);
-	}
-
-	printBST(root);
-	
-	cout << treeHeight(root) << endl;
-
-	*/
-
-
-
 
 	//now we'll read the number of operations to be made
 	int numOp;
@@ -169,8 +64,6 @@ int main()
 
 	printf("0: %d\n", treeHeight(root)); //print the BST height before the operations
 
-	//traverse(root);
-
 	for(int i = 0; i < numOp; ++i)
 	{
 			
@@ -182,108 +75,23 @@ int main()
 			{
 				BST_Insert(root, add);
 				printf("%d: 1\n", i+1); //sucessfully added element
-				//DEBUG
-				//display(root);
 			}
 			else
-			{
 				printf("%d: 0\n", i+1); //element is already there, can't add
-				//DEBUG
-				//display(root);
-			}
 		}
 		else
 		{
 			sscanf(op, "DEL %d %d", &delL, &delR);
 			int erasedObjects = 0;
 
-			//cout << "VALOR DA ROOT" << root->value << endl;
 			root = searchAndDestroy(root, delL, delR, &erasedObjects);
-			//root = searchAndDestroy(root, delL, delR, &erasedObjects);
-	
-			//display(root);
-			//cout << endl << endl << endl;
-
 			printf("%d: %d\n", i+1, erasedObjects); //number of erased objects.
 		}
-
-		//printf("%d\n %d\n %d\n", add, delL, delR);
-
-		/*if(i+1 == 144)
-		{
-			cout << endl << endl << endl << endl;
-			traverse(root);
-		}*/
-
 	}
-
-	//printf("%d: %d\n", numOp+1, treeHeight(root)); //print the tree height after the operations
-
 	return 0;
 }
 
-
-
-
-
-/*node* fillBST(node* root, int vet[], int start, int end)
-{
-	if(start >= end)
-	{
-		BST_Insert(root, vet[start]);
-		cout << "Valor de p: " << start << endl;
-		return root;
-	}
-
-	int p = (start+end)/2;
-
-	cout << "Valor de p: " << p << endl;
-
-	if(root == NULL)
-		root = BST_Insert(root, vet[p]);
-	else
-		BST_Insert(root, vet[p]);
-
-	fillBST(root, vet, start, p-1);
-	fillBST(root, vet, p+1, end);
-
-	return root;
-}*/
-
-/*node* fillBST(node* root, int vet[], int start, int end)
-{
-
-	if(((end+1)-start) <= 2)
-	{
-		if(start !=end)
-		{
-			BST_Insert(root, vet[start]);
-			BST_Insert(root, vet[end]);
-		}
-		else
-			BST_Insert(root, vet[start]);
-		return root;
-	}
-
-	int p = (start+end)/2;
-
-	cout << "Valor de p: " << p << endl;
-
-	if(root == NULL)
-		root = BST_Insert(root, vet[p]);
-	else
-		BST_Insert(root, vet[p]);
-
-	fillBST(root, vet, start, p-1);
-	fillBST(root, vet, p+1, end);
-
-	return root;
-}*/
-
-
-
-//Auxiliary Functions
-
+//Auxiliary/Debug Functions
 int biggest(int a, int b)
 {
 	if(a>b)
@@ -304,6 +112,44 @@ int middleTerm(int a, int b, int c)
 		return biggest(a,b);
 }
 
+void display(node* root)
+{
+	_display(root, 0);
+}
+
+void _display(node* root, int spaces)
+{
+	if(root == NULL)
+		return;
+
+	_display(root->right, spaces+5);
+
+	for(int i = 0; i < spaces; ++i)
+		printf(" ");
+
+	printf("%d\n", root->value);
+
+	_display(root->left, spaces+5);
+	return;
+}
+
+void traverse(node* root)
+{
+	if(root == NULL)
+		return;
+	traverse(root->left);
+	cout << root->value << " | ";
+	traverse(root->right);
+
+	return;
+}
+//Auxiliary/Debug Functions
+
+
+
+
+//BST Operations
+
 node* BST_New(int v)
 {
 	node* root = new node;
@@ -314,11 +160,21 @@ node* BST_New(int v)
 	return root;
 }
 
-//Auxiliary Functions
+node* BST_Search(node* root, int v)
+{
+	if(root == NULL)
+		return NULL;
 
+	else if(root->value == v)
+		return root;
 
+	else if(v < root->value)
+		return BST_Search(root->left, v);
 
-//BST Functions
+	else
+		return BST_Search(root->right, v);
+}
+
 node* BST_Insert(node* root, int v)
 {
 	
@@ -341,83 +197,6 @@ node* BST_Insert(node* root, int v)
 		return root;
 	}
 
-}
-
-node* searchAndDestroy(node* root, int startInterval, int endInterval, int *destroyCount)
-{
-	if(root == NULL)
-		return root;
-
-	//First we have to filter our node choice. Let's search for someone in the interval.
-	if(root->value < startInterval)
-		root->right = searchAndDestroy(root->right, startInterval, endInterval, destroyCount); //still not the guy, advance
-	else if(root->value > endInterval)
-		root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount); //too much, go back.
-	else
-	{
-		//now we are in the subtree with the desired range, let's start the extermination
-		root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
-		root = BST_Delete(root, root->value);
-		*destroyCount += 1;
-
-		//if(root == NULL)
-			//return root;
-
-		if(root != NULL && evaluate(root, startInterval, endInterval))
-			root = searchAndDestroy(root, startInterval, endInterval, destroyCount); //here we check for the possibility that the node we just deleted is still in the range
-
-		if(root != NULL)
-			root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
-
-		if(root != NULL)
-			root->right = searchAndDestroy(root->right, startInterval, endInterval, destroyCount);
-	}
-
-
-	//root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
-	
-	//cout << root->value << " | ";
-
-	/*while(evaluate(root, startInterval, endInterval))
-	{	
-		*destroyCount += 1;
-		root = BST_Delete(root, root->value);
-
-		if(root == NULL)
-			return root;
-	}*/
-
-	
-
-	return root;
-}
-
-bool evaluate(node* root, int startInterval, int endInterval)
-{
-	if( (root->value >= startInterval) && (root->value <= endInterval))
-	{
- 		//cout <<  " |"<< root->value << "| \n";
-		return 1;
- 	}
-	else
-		return 0;
-}
-
-
-
-node* BST_Search(node* root, int v)
-{
-	if(root == NULL)
-		return NULL;
-
-	else if(root->value == v)
-		return root;
-
-	else if(v < root->value)
-		return BST_Search(root->left, v);
-
-	else
-		return BST_Search(root->right, v);
 }
 
 node* BST_Delete(node* root, int v)
@@ -464,7 +243,8 @@ node* BST_Delete(node* root, int v)
 			return root;
 		}
 	}
-}	
+}
+
 node* BST_DeleteMin(node* root, int* val)
 {
 
@@ -482,15 +262,6 @@ node* BST_DeleteMin(node* root, int* val)
 	}
 }
 
-void printBST(node *root)
-{
-	if(root == NULL)
-		return;
-	printBST(root->left);
-	cout << root->value << endl;
-	printBST(root->right);
-}
-
 int treeHeight(node* root)
 {
 	int L, R;
@@ -506,140 +277,9 @@ int treeHeight(node* root)
 	else
 		return 1 + R;
 }
+//BST Operations
 
-
-//Quicksort
-void quickSort(int vet[], int start, int end)
-{
-	if(start >= end)
-	{	
-		//BST_Insert(RAIZ, vet[end]);
-		return;
-	}
-
-	int p = partition(vet, start, end);
-	quickSort(vet, start, p-1);
-	quickSort(vet, p+1, end);
-}
-
-int partition(int vet[], int start, int end)
-{
-	int p = pivot(vet, start, end);
-
-	/*if(RAIZ == NULL)
-		RAIZ = BST_Insert(RAIZ, vet[p]);
-	else
-		BST_Insert(RAIZ, vet[p]);*/
-
-
-	
-	if(p != 0)
-		swap(vet[start], vet[p]);
-
-	int i = start, j = end;
-
-	while(i < j)
-	{
-		while((i <= end) && (vet[i] <= vet[start]))
-			++i;
-
-		while(vet[j] > vet[start])
-			--j;
-
-		if(i<j)
-			swap(vet[i],vet[j]);
-	}
-
-	swap(vet[start],vet[j]);
-	return j;
-}
-
-int pivot(int vet[], int start, int end)
-{
-	int baseIndex = 0;
-
-	//cout << "start: " << start << "    end: " << end << endl;
-
-	if(((end-start)+1) >= 3)
-	{
-		//Now the base for our BST will be the medium between DA[0], D[(N-1)/2] and D[N-1]
-		int B1 = vet[start], B2 = vet[(start+end)/2], B3 = vet[end];
-		
-		baseIndex = middleTerm(B1, B2, B3);
-
-		//printf("BASES: %d %d %d\n",B1, B2, B3 );
-		
-		if(baseIndex == B1)
-			baseIndex = start;
-		else if(baseIndex == B2)
-			baseIndex = (start+end)/2;
-		else
-			baseIndex = end;
-
-		//printf("%d %d %d\n",B1, B2, B3 );
-		//printf("[if]PIVOT ATUAL: %d \n", baseIndex);
-		return baseIndex;
-	}
-
-	//printf("PIVOT ATUAL: %d \n", baseIndex);
-
-	return 0;
-}
-
-void swap(int *a, int *b)
-{
-	int aux = *a;
-	*a = *b;
-	*b = aux;
-}
-
-
-int binarySearch(int vet[], int v, int size) //See if I can extend to find the first bigger number after the searched, in case it doesn't exist.
-{
-	int l = 0, r = size-1;
-	int middle;
-
-	do
-	{
-		middle = (l+r)/2;
-
-		if(v == vet[middle])
-			return middle;
-
-		else if(v < vet[middle])
-			r = middle-1;
-
-		else
-			l = middle+1;
-	}while(l <= r);
-
-	return -1;
-}
-
-
-
-void display(node* root)
-{
-	_display(root, 0);
-}
-
-void _display(node* root, int spaces)
-{
-	if(root == NULL)
-		return;
-
-	_display(root->right, spaces+5);
-
-	for(int i = 0; i < spaces; ++i)
-		printf(" ");
-
-	printf("%d\n", root->value);
-
-	_display(root->left, spaces+5);
-	return;
-}
-
-
+//Exercise Specific - BSPT Creation and Interval Destruction.
 node* createBSPTree(node* root, int start, int end, int v[])
 {
 	//cout << "START: " << start << "END: " << end << endl;
@@ -696,3 +336,94 @@ node* createBSPTree(node* root, int start, int end, int v[])
 
 	return root;
 }
+
+int pivot(int vet[], int start, int end)
+{
+	int baseIndex = 0;
+
+	//cout << "start: " << start << "    end: " << end << endl;
+
+	if(((end-start)+1) >= 3)
+	{
+		//Now the base for our BST will be the medium between DA[0], D[(N-1)/2] and D[N-1]
+		int B1 = vet[start], B2 = vet[(start+end)/2], B3 = vet[end];
+		
+		baseIndex = middleTerm(B1, B2, B3);
+
+		//printf("BASES: %d %d %d\n",B1, B2, B3 );
+		
+		if(baseIndex == B1)
+			baseIndex = start;
+		else if(baseIndex == B2)
+			baseIndex = (start+end)/2;
+		else
+			baseIndex = end;
+
+		//printf("%d %d %d\n",B1, B2, B3 );
+		//printf("[if]PIVOT ATUAL: %d \n", baseIndex);
+		return baseIndex;
+	}
+
+	//printf("PIVOT ATUAL: %d \n", baseIndex);
+
+	return 0;
+}
+
+node* searchAndDestroy(node* root, int startInterval, int endInterval, int *destroyCount)
+{
+	if(root == NULL)
+		return root;
+
+	//First we have to filter our node choice. Let's search for someone in the interval.
+	if(root->value < startInterval)
+		root->right = searchAndDestroy(root->right, startInterval, endInterval, destroyCount); //still not the guy, advance
+	else if(root->value > endInterval)
+		root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount); //too much, go back.
+	else
+	{
+		//now we are in the subtree with the desired range, let's start the extermination
+		root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
+		root = BST_Delete(root, root->value);
+		*destroyCount += 1;
+
+		//if(root == NULL)
+			//return root;
+
+		if(root != NULL && evaluate(root, startInterval, endInterval))
+			root = searchAndDestroy(root, startInterval, endInterval, destroyCount); //here we check for the possibility that the node we just deleted is still in the range
+
+		if(root != NULL)
+			root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
+
+		if(root != NULL)
+			root->right = searchAndDestroy(root->right, startInterval, endInterval, destroyCount);
+	}
+
+
+	//root->left = searchAndDestroy(root->left, startInterval, endInterval, destroyCount);
+	
+	//cout << root->value << " | ";
+
+	/*while(evaluate(root, startInterval, endInterval))
+	{	
+		*destroyCount += 1;
+		root = BST_Delete(root, root->value);
+
+		if(root == NULL)
+			return root;
+	}*/
+
+	
+
+	return root;
+}
+
+bool evaluate(node* root, int startInterval, int endInterval)
+{
+	if( (root->value >= startInterval) && (root->value <= endInterval))
+		return 1;
+	else
+		return 0;
+}
+
+//Exercise Specific - BSPT Creation and Interval Destruction.
